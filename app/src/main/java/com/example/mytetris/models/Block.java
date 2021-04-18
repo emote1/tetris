@@ -1,9 +1,13 @@
 package com.example.mytetris.models;
+
+
 import com.example.mytetris.constants.FieldConstants;
 
 import android.graphics.Color;
 import android.graphics.Point;
 import androidx.annotation.NonNull;
+
+import java.util.Random;
 
 
 public class Block {
@@ -11,6 +15,23 @@ public class Block {
     private int frameNumber;
     private BlockColor color;
     private Point position;
+
+    private Block(int shapeIndex, BlockColor blockColor) {
+        this.frameNumber = 0;
+        this.shapeIndex = shapeIndex;
+        this.color = blockColor;
+        this.position = new Point(FieldConstants.COLUMN_COUNT.getValue() / 2, 0);
+    }
+
+    public static Block createBlock() {
+        Random random = new Random();
+        int shapeIndex = random.nextInt(Shape.values().length);
+        BlockColor blockColor = BlockColor.values()[random.nextInt(BlockColor.values().length)];
+        Block block = new Block(shapeIndex, blockColor);
+        block.position.x = block.position.x - Shape.values()[shapeIndex].getStartPosition();
+        return block;
+    }
+
 
     public enum BlockColor {
         PINK(Color.rgb(255, 105, 180), (byte) 2),
@@ -28,6 +49,7 @@ public class Block {
         private final byte byteValue;
     }
 
+
     public static int getColor(byte value) {
         for (BlockColor colour : BlockColor.values()) {
             if (value == colour.byteValue) {
@@ -37,7 +59,8 @@ public class Block {
         return -1;
     }
     public final void setState(int frame, Point position) {
-        this.frameNumber = frame; this.position = position;
+        this.frameNumber = frame;
+        this.position = position;
     }
     @NonNull
     public final byte[][] getShape(int frameNumber) {
@@ -46,7 +69,6 @@ public class Block {
     }
 
     public Point getPosition() {
-        this.position = new Point(FieldConstants.COLUMN_COUNT.getValue()/2, 0);
         return this.position;
     }
 
@@ -65,4 +87,8 @@ public class Block {
     public byte getStaticValue() {
         return color.byteValue;
     }
+
+
+
+
 }
